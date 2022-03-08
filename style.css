@@ -1,0 +1,57 @@
+*,
+*::before,
+*::after {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* flex-direction: column; */
+}
+
+button {
+    padding: 5px 10px;
+    border: 3px solid black;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-left: 20px;
+}
+
+.flagged {
+    background-color: rgb(0, 255, 0);
+    color: white;
+}
+
+#gameStatus {
+    position: absolute;
+    min-height: 100vh;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.808);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 3rem;
+    flex-direction: column;
+}
+
+#gameStatus.hide {
+    display: none;
+}
+
+#gameOverButton {
+    margin: 0;
+}
