@@ -2,15 +2,22 @@ const ROWS = 20;
 const COLS = ROWS;
 const LENGTH = 45;
 const board = new Array(ROWS);
-const MINE_COUNT = 60;
+let MINE_COUNT = 60;
 let gameOver = false;
+let infoDiv;
 let flagMode = false;
 let flag;
 let gameStatus;
-let mineIndex = [];
+let mineIndex = new Set();
+let flagIndex = new Set();
+let slider;
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function setup() {
-    createCanvas(ROWS * LENGTH + 2, COLS * LENGTH + 2);
+    createCanvas(
+        min(window.innerWidth * 0.9, 900),
+        min(window.innerWidth * 0.9, 900)
+    );
     for (let i = 0; i < ROWS; i++) {
         let column = new Array(COLS);
         for (let j = 0; j < COLS; j++) {
@@ -25,7 +32,7 @@ function setup() {
             i = floor(random(0, ROWS));
             j = floor(random(0, COLS));
         }
-        mineIndex.push([i, j]);
+        mineIndex.add(i.toString() + "-" + j.toString());
         board[i][j].isMine = true;
     }
     for (let i = 0; i < ROWS; i++) {
@@ -33,6 +40,13 @@ function setup() {
             board[i][j].countNeighbours();
         }
     }
+    let i = floor(random(0, ROWS));
+    let j = floor(random(0, COLS));
+    while (board[i][j].isMine || board[i][j].neighbourCount !== 0) {
+        i = floor(random(0, ROWS));
+        j = floor(random(0, COLS));
+    }
+    board[i][j].reveal();
     flag = createButton("Flag");
     flag.mouseClicked(toggleFlag);
     gameStatus = createDiv();
@@ -46,6 +60,7 @@ const restart = () => {
         }
         board[i] = column;
     }
+    mineIndex.clear();
     for (let index = 0; index < MINE_COUNT; index++) {
         let i = floor(random(0, ROWS));
         let j = floor(random(0, COLS));
@@ -53,6 +68,7 @@ const restart = () => {
             i = floor(random(0, ROWS));
             j = floor(random(0, COLS));
         }
+        mineIndex.add(i.toString() + "-" + j.toString());
         board[i][j].isMine = true;
     }
     for (let i = 0; i < ROWS; i++) {
@@ -60,6 +76,13 @@ const restart = () => {
             board[i][j].countNeighbours();
         }
     }
+    let i = floor(random(0, ROWS));
+    let j = floor(random(0, COLS));
+    while (board[i][j].isMine || board[i][j].neighbourCount !== 0) {
+        i = floor(random(0, ROWS));
+        j = floor(random(0, COLS));
+    }
+    board[i][j].reveal();
 };
 
 function toggleFlag() {
@@ -68,13 +91,47 @@ function toggleFlag() {
 }
 
 const checkIsGameOver = () => {
-    flagIndex = [];
+    flagIndex.clear();
     for (let i = 0; i < ROWS; i++) {
-        for (let j = 0; j < COLS; j++) {}
+        for (let j = 0; j < COLS; j++) {
+            if (board[i][j].flagged) {
+                flagIndex.add(i.toString() + "-" + j.toString());
+            }
+        }
+    }
+    if (flagIndex.size === MINE_COUNT) {
+        let intersect = new Set([...mineIndex].filter((i) => flagIndex.has(i)));
+        if (intersect.size === MINE_COUNT) {
+            gameOverScreen("You Win!");
+            return;
+        }
     }
 };
 
+function keyPressed() {
+    if (keyCode === 70) {
+        toggleFlag();
+    }
+}
+
+function gameOverScreen(stat) {
+    gameStatus.elt.setAttribute("id", "gameStatus");
+    gameStatus.elt.classList.remove("hide");
+    gameStatus.elt.innerText = stat;
+    let gameOverButton = document.createElement("button");
+    gameOverButton.setAttribute("id", "gameOverButton");
+    gameOverButton.innerText = "Restart";
+    gameStatus.elt.appendChild(gameOverButton);
+    gameOverButton.onclick = (e) => {
+        gameOver = false;
+        gameStatus.elt.classList.add("hide");
+        restart();
+    };
+    gameOver = true;
+}
+
 function mousePressed() {
+    if (gameOver) return;
     let i = floor(map(mouseY, 0, height, 0, ROWS));
     let j = floor(map(mouseX, 0, width, 0, COLS));
     if (i < 0 || i >= ROWS || j < 0 || j >= COLS) return;
@@ -82,8 +139,17 @@ function mousePressed() {
     if (flagMode) {
         board[i][j].flag();
     } else {
+        let response = true;
+        if (board[i][j].flagged) {
+            response = confirm(
+                "You flagged this tile, are you sure you want to reveal it?"
+            );
+        }
+        if (!response) return;
+        board[i][j].flagged = false;
         board[i][j].reveal();
     }
+    checkIsGameOver();
 }
 
 function draw() {

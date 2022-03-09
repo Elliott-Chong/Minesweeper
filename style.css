@@ -20,13 +20,27 @@ button {
     border: 3px solid black;
     font-family: inherit;
     font-weight: 600;
+    color: black;
     font-size: 1.5rem;
-    margin-left: 20px;
+    margin-left: 10px;
 }
 
 .flagged {
-    background-color: rgb(0, 255, 0);
+    background-color: #00cc99;
     color: white;
+}
+
+.sliderVal {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+.infoDiv {
+    display: flex;
+    margin-left: 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
 #gameStatus {
@@ -54,4 +68,10 @@ button {
 
 #gameOverButton {
     margin: 0;
+}
+
+@media (max-width:700px) {
+    body {
+        flex-direction: column;
+    }
 }
