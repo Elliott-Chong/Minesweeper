@@ -67,7 +67,7 @@ class Grid {
                     let j = this.j + dx;
                     if (i < 0 || i >= ROWS || j < 0 || j >= COLS || board[i][j].flagged)
                         continue;
-                    await sleep(5);
+                    await sleep(1);
                     board[i][j].reveal();
                 }
             }
