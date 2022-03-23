@@ -25,7 +25,7 @@ class Grid {
                 );
             } else if (this.neighbourCount !== 0) {
                 textAlign(CENTER, CENTER);
-                textSize(32);
+                textSize(LENGTH - 13);
                 fill(0);
                 text(
                     this.neighbourCount.toString(),

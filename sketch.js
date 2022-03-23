@@ -1,6 +1,6 @@
 const ROWS = 20;
 const COLS = ROWS;
-const LENGTH = 45;
+let LENGTH;
 const board = new Array(ROWS);
 let MINE_COUNT = 60;
 let gameOver = false;
@@ -15,9 +15,10 @@ const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 function setup() {
     createCanvas(
-        min(window.innerWidth * 0.9, 900),
-        min(window.innerWidth * 0.9, 900)
+        min(window.innerHeight * 0.9, 900),
+        min(window.innerHeight * 0.9, 900)
     );
+    LENGTH = min(window.innerHeight * 0.9, 900) / ROWS
     for (let i = 0; i < ROWS; i++) {
         let column = new Array(COLS);
         for (let j = 0; j < COLS; j++) {
