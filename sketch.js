@@ -76,7 +76,7 @@ function setup() {
   desc1.innerText = 'Click on a square to reveal it. If you click on a mine, you lose. You can press "F" to toggle flag mode'
   desc2 = document.createElement('p')
 
-  desc2.innerText = `${window.innerWidth}You can press on the AI button to have the AI make a move for you. The AI will automatically flag all the mines. You can press "A" to use the AI too.`
+  desc2.innerText = `You can press on the AI button to have the AI make a move for you. The AI will automatically flag all the mines. You can press "A" to use the AI too.`
   const credit = document.createElement('p')
   credit.innerHTML = 'Source code: <a target="_blank" href="https://github.com/elliott-chong/minesweeper-ai">Elliott Chong</a>'
   // document.body.appendChild(credit)
