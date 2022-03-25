@@ -4,6 +4,7 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  user-select: none;
 }
 
 body {
@@ -23,6 +24,8 @@ button {
   cursor: pointer;
   color: black;
   font-size: 1.5rem;
+}
+button:nth-child(2) {
   margin-left: 10px;
 }
 
@@ -31,17 +34,22 @@ button {
   color: white;
 }
 
-.sliderVal {
-  font-weight: 600;
-  font-size: 1.2rem;
+.wrapperDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .infoDiv {
-  display: flex;
-  margin-left: 20px;
   flex-direction: column;
+  width: 20rem;
+  display: flex;
   align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  text-align: center;
   justify-content: center;
+  margin-left: 20px;
 }
 
 #gameStatus {
@@ -74,5 +82,10 @@ button {
 @media (max-width: 700px) {
   body {
     flex-direction: column;
+  }
+
+  .infoDiv {
+    margin-left: 0;
+    margin-top: 10px;
   }
 }

@@ -12,13 +12,21 @@ let mineIndex = new Set();
 let flagIndex = new Set();
 let slider;
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+let msAI = new AI()
 
 function setup() {
-  createCanvas(
-    min(window.innerHeight * 0.9, 900),
+
+  boardLength =
     min(window.innerHeight * 0.9, 900)
+
+  if (window.innerWidth < 500) {
+    boardLength = window.innerWidth * 0.95
+  }
+
+  createCanvas(
+    boardLength, boardLength
   );
-  LENGTH = min(window.innerHeight * 0.9, 900) / ROWS;
+  LENGTH = boardLength / ROWS;
   for (let i = 0; i < ROWS; i++) {
     let column = new Array(COLS);
     for (let j = 0; j < COLS; j++) {
@@ -48,18 +56,69 @@ function setup() {
     j = floor(random(0, COLS));
   }
   board[i][j].reveal();
-  flag = createButton("Flag");
-  aiBtn = createButton("AI");
-  flag.mouseClicked(toggleFlag);
-  aiBtn.mouseClicked(aiMove);
+  msAI.add_knowledge([i, j], board[i][j].neighbourCount)
+  flag = document.createElement('button')
+  flag.innerText = "Flag"
+  wrapperDiv = document.createElement('div')
+  infoDiv = createDiv()
+  infoDiv = infoDiv.elt
+
+  msAIBtn = document.createElement('button')
+  msAIBtn.innerText = 'AI Move'
+  wrapperDiv.appendChild(msAIBtn)
+  wrapperDiv.appendChild(flag)
+  flag.onclick = toggleFlag;
+  infoDiv.classList.add('infoDiv')
+  infoDiv.appendChild(wrapperDiv)
+  wrapperDiv.classList.add('wrapperDiv')
+  msAIBtn.onclick = msAIMove;
+  desc1 = document.createElement('p')
+  desc1.innerText = 'Click on a square to reveal it. If you click on a mine, you lose. You can press "F" to toggle flag mode'
+  desc2 = document.createElement('p')
+
+  desc2.innerText = `${window.innerWidth}You can press on the AI button to have the AI make a move for you. The AI will automatically flag all the mines. You can press "A" to use the AI too.`
+  const credit = document.createElement('p')
+  credit.innerHTML = 'Source code: <a target="_blank" href="https://github.com/elliott-chong/minesweeper-ai">Elliott Chong</a>'
+  // document.body.appendChild(credit)
+  credit.classList.add('credit')
+
+
+  infoDiv.appendChild(desc1)
+  infoDiv.appendChild(desc2)
+  infoDiv.appendChild(credit)
   gameStatus = createDiv();
 }
 
-const aiMove = () => {
-  console.log("ai move");
+const msAIMove = async () => {
+  if (gameOver) return
+  let move = msAI.make_safe_move()
+  if (move) {
+    let [y, x] = move
+    console.log('msAI making safe move')
+    board[y][x].reveal();
+  }
+  else {
+    console.log('msAI making random move')
+    move = msAI.make_random_move()
+    if (!move) {
+      console.log("No moves left to make")
+      return
+    }
+    let [y, x] = move
+    board[y][x].reveal();
+  }
+  for (let mines of msAI.mines) {
+    let [y, x] = mines
+    board[y][x].flag()
+    await sleep(3)
+  }
+  checkIsGameOver()
+  // let [y, x] = move
+  // msAI.add_knowledge(move, board[y][x].neighbourCount)
 };
 
 const restart = () => {
+  msAI = new AI()
   for (let i = 0; i < ROWS; i++) {
     let column = new Array(COLS);
     for (let j = 0; j < COLS; j++) {
@@ -90,6 +149,7 @@ const restart = () => {
     j = floor(random(0, COLS));
   }
   board[i][j].reveal();
+  msAI.add_knowledge([i, j], board[i][j].neighbourCount)
 };
 
 function toggleFlag() {
@@ -118,6 +178,9 @@ const checkIsGameOver = () => {
 function keyPressed() {
   if (keyCode === 70) {
     toggleFlag();
+  }
+  if (keyCode === 65) {
+    msAIMove()
   }
 }
 
@@ -155,6 +218,7 @@ function mousePressed() {
     if (!response) return;
     board[i][j].flagged = false;
     board[i][j].reveal();
+    msAI.add_knowledge([i, j], board[i][j].neighbourCount)
   }
   checkIsGameOver();
 }

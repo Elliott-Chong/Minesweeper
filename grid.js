@@ -11,6 +11,9 @@ class Grid {
   show() {
     if (this.gameOver) return;
     strokeWeight(3);
+    if (window.innerWidth < 500) {
+      strokeWeight(1)
+    }
     stroke(0);
     if (this.isRevealed) {
       fill(200);
@@ -25,7 +28,7 @@ class Grid {
         );
       } else if (this.neighbourCount !== 0) {
         textAlign(CENTER, CENTER);
-        textSize(LENGTH - 13);
+        textSize(LENGTH - 8);
         fill(0);
         text(
           this.neighbourCount.toString(),
@@ -39,6 +42,7 @@ class Grid {
       fill(255);
       rect(this.j * LENGTH, this.i * LENGTH, LENGTH, LENGTH);
       fill(0, 204, 153);
+
       triangle(
         this.j * LENGTH + LENGTH / 4,
         this.i * LENGTH + LENGTH / 4,
@@ -60,6 +64,7 @@ class Grid {
       gameOverScreen("You Lose :(");
       return;
     }
+    msAI.add_knowledge([this.i, this.j], this.neighbourCount)
     if (this.neighbourCount === 0) {
       for (let dy = -1; dy < 2; dy++) {
         for (let dx = -1; dx < 2; dx++) {
@@ -67,7 +72,7 @@ class Grid {
           let j = this.j + dx;
           if (i < 0 || i >= ROWS || j < 0 || j >= COLS || board[i][j].flagged)
             continue;
-          await sleep(3);
+          await sleep(1);
           board[i][j].reveal();
         }
       }
