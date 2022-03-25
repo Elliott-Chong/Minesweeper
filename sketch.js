@@ -154,7 +154,7 @@ const restart = () => {
 
 function toggleFlag() {
   flagMode = !flagMode;
-  flag.elt.classList.toggle("flagged");
+  flag.classList.toggle("flagged");
 }
 
 const checkIsGameOver = () => {

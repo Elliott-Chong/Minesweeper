@@ -29,7 +29,8 @@ class Grid {
       } else if (this.neighbourCount !== 0) {
         textAlign(CENTER, CENTER);
         textSize(LENGTH - 8);
-        stroke(3)
+        // textSize(32);
+        // stroke(3/)
         fill(0);
         text(
           this.neighbourCount.toString(),
@@ -73,7 +74,7 @@ class Grid {
           let j = this.j + dx;
           if (i < 0 || i >= ROWS || j < 0 || j >= COLS || board[i][j].flagged)
             continue;
-          await sleep(1);
+          await sleep(.1);
           board[i][j].reveal();
         }
       }
