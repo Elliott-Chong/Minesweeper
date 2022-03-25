@@ -29,6 +29,7 @@ class Grid {
       } else if (this.neighbourCount !== 0) {
         textAlign(CENTER, CENTER);
         textSize(LENGTH - 8);
+        stroke(3)
         fill(0);
         text(
           this.neighbourCount.toString(),
