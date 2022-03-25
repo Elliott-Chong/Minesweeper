@@ -73,7 +73,7 @@ function setup() {
   wrapperDiv.classList.add('wrapperDiv')
   msAIBtn.onclick = msAIMove;
   desc1 = document.createElement('p')
-  desc1.innerText = 'Click on a square to reveal it. If you click on a mine, you lose. You can press "F" to toggle flag mode'
+  desc1.innerText = 'Click on a square to reveal it. If you click on a mine, you lose. The number on the square represents the number of mines surrounding it. You can press "F" to toggle flag mode'
   desc2 = document.createElement('p')
 
   desc2.innerText = `You can press on the AI button to have the AI make a move for you. The AI will automatically flag all the mines. You can press "A" to use the AI too.`
