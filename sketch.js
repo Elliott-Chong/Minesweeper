@@ -1,7 +1,7 @@
 const ROWS = 20;
 const COLS = ROWS;
 let LENGTH;
-const board = new Array(ROWS);
+let board = new Array(ROWS);
 let MINE_COUNT = 60;
 let gameOver = false;
 let infoDiv;
@@ -71,7 +71,7 @@ function setup() {
   infoDiv.classList.add('infoDiv')
   infoDiv.appendChild(wrapperDiv)
   wrapperDiv.classList.add('wrapperDiv')
-  msAIBtn.onclick = msAIMove;
+  msAIBtn.onclick = msAIMove
   desc1 = document.createElement('p')
   desc1.innerText = 'Click on a square to reveal it. If you click on a mine, you lose. The number on the square represents the number of mines surrounding it. You can press "F" to toggle flag mode'
   desc2 = document.createElement('p')
@@ -108,8 +108,9 @@ const msAIMove = async () => {
     board[y][x].reveal();
   }
   for (let mines of msAI.mines) {
+    if (gameOver) return
     let [y, x] = mines
-    board[y][x].flag()
+    board[y][x].flagged = true
     await sleep(3)
   }
   checkIsGameOver()
@@ -119,6 +120,7 @@ const msAIMove = async () => {
 
 const restart = () => {
   msAI = new AI()
+  mineIndex.clear();
   for (let i = 0; i < ROWS; i++) {
     let column = new Array(COLS);
     for (let j = 0; j < COLS; j++) {
@@ -126,7 +128,6 @@ const restart = () => {
     }
     board[i] = column;
   }
-  mineIndex.clear();
   for (let index = 0; index < MINE_COUNT; index++) {
     let i = floor(random(0, ROWS));
     let j = floor(random(0, COLS));
@@ -148,6 +149,12 @@ const restart = () => {
     i = floor(random(0, ROWS));
     j = floor(random(0, COLS));
   }
+  for (let i = 0; i < ROWS; i++) {
+    for (let j = 0; j < COLS; j++) {
+      board[i][j].flagged = false;
+    }
+  }
+
   board[i][j].reveal();
   msAI.add_knowledge([i, j], board[i][j].neighbourCount)
 };
@@ -170,9 +177,10 @@ const checkIsGameOver = () => {
     let intersect = new Set([...mineIndex].filter((i) => flagIndex.has(i)));
     if (intersect.size === MINE_COUNT) {
       gameOverScreen("You Win!");
-      return;
+      return true;
     }
   }
+  return false
 };
 
 function keyPressed() {
@@ -207,7 +215,7 @@ function mousePressed() {
   if (i < 0 || i >= ROWS || j < 0 || j >= COLS) return;
   if (board[i][j].isRevealed) return;
   if (flagMode) {
-    board[i][j].flag();
+    board[i][j].flagged = true;
   } else {
     let response = true;
     if (board[i][j].flagged) {

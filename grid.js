@@ -93,7 +93,5 @@ class Grid {
     }
   }
 
-  flag() {
-    this.flagged = true;
-  }
+
 }
